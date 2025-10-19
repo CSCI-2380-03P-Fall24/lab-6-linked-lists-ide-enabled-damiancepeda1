@@ -6,7 +6,8 @@
 	// so be sure that the "next" Node is linked to a nullptr
 Node::Node(string s) 
 {
-
+	data = s;
+    next = nullptr;
 }
 
 //constructor : initiazlize the head and tail field from LLStack class 
@@ -14,7 +15,9 @@ Node::Node(string s)
 	// the head and tail should both be initialized as null pointers
 LLStack::LLStack()
 {
-
+    head = nullptr;
+    tail = nullptr;
+    count = 0;
 }
 
 /*
@@ -24,7 +27,10 @@ LLStack::LLStack()
 */
 string LLStack::top()
 {
-	return "fixthis";
+	if (head == nullptr) {
+		return "";
+    }
+    return head->data;
 }
 
 /*
@@ -32,7 +38,7 @@ string LLStack::top()
 */
 int LLStack::size()
 {
-	return -1;
+	return count;
 }
 
 /*
@@ -45,7 +51,15 @@ int LLStack::size()
 */
 void LLStack::push(string s)
 {
+    Node* newNode = new Node(s);
+    newNode->next = head; // new node points to previous top
+    head = newNode;       // head now points to new node
 
+    if (count == 0) {
+        tail = newNode;   // first node becomes tail too
+    }
+
+    count++;
 }
 
 /*
@@ -57,7 +71,19 @@ void LLStack::push(string s)
 */
 void LLStack::pop()
 {
+   if (head == nullptr) {
+        return; // nothing to pop
+    }
 
+    Node* temp = head;
+    head = head->next;
+    delete temp;
+
+    count--;
+
+    if (count == 0) {
+        tail = nullptr; // stack became empty
+    }
 }
 
 /*
@@ -82,6 +108,39 @@ void LLStack::pop()
 */
 int LLStack::removeAll(const string& target) 
 {
-	return -1;
+	 int removed = 0;
+    Node* curr = head;
+    Node* prev = nullptr;
+
+    while (curr != nullptr) {
+        if (curr->data == target) {
+            Node* toDelete = curr;
+
+            if (prev == nullptr) {
+                head = curr->next;
+            } else {
+                prev->next = curr->next;
+            }
+
+            curr = curr->next;
+            delete toDelete;
+            removed++;
+            count--;
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    if (head == nullptr) {
+        tail = nullptr;
+    } else {
+        Node* temp = head;
+        while (temp->next != nullptr) {
+            temp = temp->next;
+        }
+        tail = temp;
+    }
+	return removed;
 }
 
